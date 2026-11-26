@@ -1241,6 +1241,19 @@
           }
         }
       ],
+      "transformations": [
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "field": "Year",
+                "desc": false
+              }
+            ]
+          }
+        }
+      ],
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1274,7 +1287,7 @@
       },
       "type": "table",
       "title": "Christmas tree farms by Missouri county (2022 Census of Agriculture)",
-      "description": "USDA NASS Census of Agriculture, Christmas trees, county level. '(D)' cells are withheld by NASS to avoid disclosing individual farms and stay blank.",
+      "description": "USDA NASS 2022 Census of Agriculture: farms with cut Christmas trees in production ('CUT CHRISTMAS TREES - OPERATIONS WITH AREA IN PRODUCTION'), by county.",
       "targets": [
         {
           "refId": "A",
@@ -1292,18 +1305,8 @@
               "type": "string"
             },
             {
-              "selector": "year",
-              "text": "Census",
-              "type": "string"
-            },
-            {
-              "selector": "short_desc",
-              "text": "Measure",
-              "type": "string"
-            },
-            {
               "selector": "value_num",
-              "text": "Value",
+              "text": "Farms",
               "type": "number"
             },
             {
@@ -1313,11 +1316,11 @@
             },
             {
               "selector": "year",
-              "text": "census_year",
+              "text": "census",
               "type": "number"
             }
           ],
-          "filterExpression": "series == 'christmas_tree_ops' && census_year == 2022",
+          "filterExpression": "series == 'christmas_tree_ops' && census == 2022",
           "source": "url",
           "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/nass_mo.csv",
           "url_options": {
@@ -1325,11 +1328,22 @@
           }
         }
       ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "series": true,
+              "census": true
+            }
+          }
+        }
+      ],
       "options": {
         "showHeader": true,
         "sortBy": [
           {
-            "displayName": "Value",
+            "displayName": "Farms",
             "desc": true
           }
         ]

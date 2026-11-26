@@ -241,17 +241,18 @@ def build(inline: bool) -> dict:
         "targets": [b.csv("nass_mo.csv", [("year", "Year", "string"), ("rank", "Rank", "number"),
                                          ("series", "series", "string"), ("state_alpha", "state_alpha", "string")],
                           filter_expr="series == 'turkeys_raised' && state_alpha == 'MO'")],
+        "transformations": [{"id": "sortBy", "options": {"sort": [{"field": "Year", "desc": False}]}}],
         "fieldConfig": {"defaults": {"color": {"mode": "fixed", "fixedColor": GOLD}}, "overrides": []},
         "options": {"xField": "Year", "showValue": "always", "legend": {"showLegend": False, "displayMode": "list", "placement": "bottom"}},
     }, w=12, h=8, newline=False)
     b.add({
         "type": "table", "title": "Christmas tree farms by Missouri county (2022 Census of Agriculture)",
-        "description": "USDA NASS Census of Agriculture, Christmas trees, county level. '(D)' cells are withheld by NASS to avoid disclosing individual farms and stay blank.",
-        "targets": [b.csv("nass_mo.csv", [("county_name", "County", "string"), ("year", "Census", "string"),
-                                         ("short_desc", "Measure", "string"), ("value_num", "Value", "number"),
-                                         ("series", "series", "string"), ("year", "census_year", "number")],
-                          filter_expr="series == 'christmas_tree_ops' && census_year == 2022")],
-        "options": {"showHeader": True, "sortBy": [{"displayName": "Value", "desc": True}]},
+        "description": "USDA NASS 2022 Census of Agriculture: farms with cut Christmas trees in production ('CUT CHRISTMAS TREES - OPERATIONS WITH AREA IN PRODUCTION'), by county.",
+        "targets": [b.csv("nass_mo.csv", [("county_name", "County", "string"), ("value_num", "Farms", "number"),
+                                         ("series", "series", "string"), ("year", "census", "number")],
+                          filter_expr="series == 'christmas_tree_ops' && census == 2022")],
+        "transformations": [{"id": "organize", "options": {"excludeByName": {"series": True, "census": True}}}],
+        "options": {"showHeader": True, "sortBy": [{"displayName": "Farms", "desc": True}]},
     }, w=12, h=8, x=12)
 
     # -------------------------------------------------------------- safety
