@@ -9,6 +9,10 @@ on:
       only:
         description: "comma-separated sources (blank = all)"
         required: false
+      snapshot:
+        description: "download raw source files as an artifact instead of running the ETL"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -30,9 +34,30 @@ jobs:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: mo-holiday-season/requirements.txt
+      - name: Snapshot raw sources (debugging parsers against real files)
+        if: ${{ inputs.snapshot }}
+        run: |
+          mkdir -p raw
+          UA="awesome-grafana-mo-holiday-season/0.1"
+          for y in $(seq 2015 2026); do
+            curl -sSL -A "$UA" -o raw/mdc_$y.html -w "mdc $y %{http_code} %{size_download}\n" \
+              "https://mdc.mo.gov/hunting-trapping/species/turkey/turkey-reports/turkey-harvest-summaries/$y-turkey-harvest-summary"
+          done
+          curl -sSL -A "$UA" -o raw/tiger_mo_counties.json -w "tiger %{http_code} %{size_download}\n" \
+            "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1/query?where=STATE%3D%2729%27&outFields=NAME,GEOID,CENTLAT,CENTLON&returnGeometry=false&f=json"
+          curl -sSL -A "$UA" -o raw/white_christmas.xlsx -w "ncei %{http_code} %{size_download}\n" \
+            "https://www.ncei.noaa.gov/sites/default/files/2021-12/Christmas_day_snow_statistics_1991-2020_updated.xlsx"
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.snapshot }}
+        with:
+          name: raw-sources
+          path: mo-holiday-season/raw/
       - run: pip install -r requirements.txt
+        if: ${{ !inputs.snapshot }}
       - run: python -m pytest -q
+        if: ${{ !inputs.snapshot }}
       - name: Run ETL
+        if: ${{ !inputs.snapshot }}
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
           NASS_API_KEY: ${{ secrets.NASS_API_KEY }}
@@ -40,7 +65,7 @@ jobs:
       - name: Commit data
         # Each source is validated independently and a failed source never writes its file,
         # so publish whatever passed even when another source failed (the job stays red).
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && !inputs.snapshot }}
         run: |
           git config user.name "holiday-etl[bot]"
           git config user.email "holiday-etl@users.noreply.github.com"
