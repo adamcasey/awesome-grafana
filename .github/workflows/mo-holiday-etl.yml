@@ -63,7 +63,24 @@ jobs:
           curl -sS -G "$N/get_param_values/" --data-urlencode "key=$NASS_API_KEY" --data-urlencode "param=short_desc" \
             --data-urlencode "commodity_desc=TURKEYS" --data-urlencode "state_alpha=MO" --data-urlencode "source_desc=SURVEY" \
             | scrub > raw/nass_turkeys_short_desc.json
+          curl -sS -G "$N/get_param_values/" --data-urlencode "key=$NASS_API_KEY" --data-urlencode "param=commodity_desc" \
+            --data-urlencode "state_alpha=MO" --data-urlencode "source_desc=CENSUS" --data-urlencode "sector_desc=CROPS" \
+            | scrub > raw/nass_mo_census_crop_commodities.json
+          curl -sS -G "$N/get_param_values/" --data-urlencode "key=$NASS_API_KEY" --data-urlencode "param=short_desc" \
+            --data-urlencode "state_alpha=MO" --data-urlencode "source_desc=CENSUS" --data-urlencode "agg_level_desc=COUNTY" \
+            --data-urlencode "short_desc__LIKE=CHRISTMAS" | scrub > raw/nass_mo_county_christmas_short_desc.json
+          # Is EIA up at all from this network? (metadata route, then a daily-frequency data route)
+          curl -sS -G "https://api.eia.gov/v2/electricity/rto/region-data/" --data-urlencode "api_key=$EIA_API_KEY" \
+            -o raw/eia_meta.json -w "meta %{http_code} %{time_total}s\n" | tee -a raw/eia_probe_summary.txt
+          scrub < raw/eia_meta.json > raw/eia_meta.tmp && mv raw/eia_meta.tmp raw/eia_meta.json
+          curl -sS -G "https://api.eia.gov/v2/electricity/rto/daily-region-data/data/" --data-urlencode "api_key=$EIA_API_KEY" \
+            --data-urlencode "frequency=daily" --data-urlencode "data[0]=value" --data-urlencode "facets[type][]=D" \
+            --data-urlencode "facets[respondent][]=MISO" --data-urlencode "facets[timezone][]=Central" \
+            --data-urlencode "start=2026-11-10" --data-urlencode "end=2026-11-26" \
+            -o raw/eia_daily.json -w "daily %{http_code} %{time_total}s\n" | tee -a raw/eia_probe_summary.txt
+          scrub < raw/eia_daily.json > raw/eia_daily.tmp && mv raw/eia_daily.tmp raw/eia_daily.json
           E="https://api.eia.gov/v2/electricity/rto/region-data/data/"
+          : > raw/eia_probe_summary.txt.hourly
           probe() {  # name, then extra query args
             name=$1; shift
             curl -sS -G "$E" --data-urlencode "api_key=$EIA_API_KEY" --data-urlencode "frequency=hourly" \
@@ -72,12 +89,6 @@ jobs:
             scrub < raw/eia_$name.json > raw/eia_$name.tmp && mv raw/eia_$name.tmp raw/eia_$name.json
           }
           probe miso_2d  --data-urlencode "facets[respondent][]=MISO" --data-urlencode "start=2026-11-20T00" --data-urlencode "end=2026-11-21T23"
-          probe miso_15d --data-urlencode "facets[respondent][]=MISO" --data-urlencode "start=2026-11-16T00" --data-urlencode "end=2026-11-26T23" --data-urlencode "length=5000"
-          probe swpp_15d --data-urlencode "facets[respondent][]=SWPP" --data-urlencode "start=2026-11-16T00" --data-urlencode "end=2026-11-26T23" --data-urlencode "length=5000"
-          probe both_sorted --data-urlencode "facets[respondent][]=MISO" --data-urlencode "facets[respondent][]=SWPP" \
-            --data-urlencode "start=2026-11-16T00" --data-urlencode "end=2026-11-26T23" --data-urlencode "sort[0][column]=period" \
-            --data-urlencode "sort[0][direction]=asc" --data-urlencode "length=5000"
-          probe miso_2025 --data-urlencode "facets[respondent][]=MISO" --data-urlencode "start=2025-11-17T00" --data-urlencode "end=2025-12-01T23" --data-urlencode "length=5000"
       - name: Publish snapshot to a throwaway branch
         if: ${{ inputs.snapshot }}
         run: |
