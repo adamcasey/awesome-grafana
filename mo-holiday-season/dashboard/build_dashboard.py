@@ -180,7 +180,7 @@ def build(inline: bool) -> dict:
     b.add({
         "type": "geomap", "title": "Wild turkeys checked in the fall firearms season, by county (latest season)",
         "description": ("MDC yearly harvest summary, 'Fall Turkey Firearms' all-counties table (Oct 1–31), joined to TIGERweb county centroids. "
-                        "Bubble size = birds checked. 2025 statewide = 1,950 (asserted against MDC's release). Fills after the first ETL run."),
+                        "Bubble size = birds checked. 2025 statewide = 1,950 (asserted against MDC's release)."),
         "targets": [b.csv("turkey_fall_harvest.csv", [("county", "County", "string"), ("lat", "lat", "number"),
                                                      ("lon", "lon", "number"), ("total", "Turkeys", "number"), ("year", "year", "number")],
                           filter_expr="year == 2025")],
@@ -196,7 +196,7 @@ def build(inline: bool) -> dict:
     }, w=10, h=11, newline=False)
     b.add({
         "type": "barchart", "title": "Statewide fall firearms turkey harvest by season",
-        "description": "Sum of MDC county rows per season (fall firearms portion, Oct 1–31). Seasons before 2015 aren't ingested yet. Fills after the first ETL run.",
+        "description": "Sum of MDC county rows per season (fall firearms portion, Oct 1–31). Seasons before 2015 aren't ingested yet.",
         "targets": [b.csv("turkey_fall_harvest.csv", [("year", "Season", "string"), ("total", "Turkeys", "number")])],
         "transformations": [{"id": "groupBy", "options": {"fields": {"Season": {"aggregations": [], "operation": "groupby"},
                                                                      "Turkeys": {"aggregations": ["sum"], "operation": "aggregate"}}}}],
@@ -237,7 +237,7 @@ def build(inline: bool) -> dict:
     b.row("Farms behind the feast and the tree")
     b.add({
         "type": "barchart", "title": "Missouri's rank among states in turkeys raised",
-        "description": "USDA NASS Quick Stats, turkeys raised (head), state level. Rank computed across states per year. Needs the NASS_API_KEY secret.",
+        "description": "USDA NASS Quick Stats, turkeys raised (head), state level. Rank computed across states per year.",
         "targets": [b.csv("nass_mo.csv", [("year", "Year", "string"), ("rank", "Rank", "number"),
                                          ("series", "series", "string"), ("state_alpha", "state_alpha", "string")],
                           filter_expr="series == 'turkeys_raised' && state_alpha == 'MO'")],
@@ -246,7 +246,7 @@ def build(inline: bool) -> dict:
     }, w=12, h=8, newline=False)
     b.add({
         "type": "table", "title": "Christmas tree farms by Missouri county (2022 Census of Agriculture)",
-        "description": "USDA NASS Census of Agriculture, Christmas trees, county level. '(D)' cells are withheld by NASS to avoid disclosing individual farms and stay blank. Needs the NASS_API_KEY secret.",
+        "description": "USDA NASS Census of Agriculture, Christmas trees, county level. '(D)' cells are withheld by NASS to avoid disclosing individual farms and stay blank.",
         "targets": [b.csv("nass_mo.csv", [("county_name", "County", "string"), ("year", "Census", "string"),
                                          ("short_desc", "Measure", "string"), ("value_num", "Value", "number"),
                                          ("series", "series", "string"), ("year", "census_year", "number")],
@@ -259,7 +259,7 @@ def build(inline: bool) -> dict:
     b.add({
         "type": "barchart", "title": "Thanksgiving weekend: crashes investigated by troopers",
         "description": ("MSHP holiday counting-period releases (6 p.m. Wednesday to 11:59 p.m. Sunday). These are troop-investigated crashes only. "
-                        "MSHP's 'statewide' figures (all agencies) are a different measure and are kept separate. Fills after the first ETL run."),
+                        "MSHP's 'statewide' figures (all agencies) are a different measure and are kept separate."),
         "targets": [b.csv("mshp_holiday.csv", [("year", "Year", "string"), ("crashes", "Crashes", "number"),
                                               ("injuries", "Injuries", "number"), ("dwi_arrests", "DWI arrests", "number"),
                                               ("scope", "scope", "string"), ("holiday", "holiday", "string")],
@@ -272,7 +272,7 @@ def build(inline: bool) -> dict:
     }, w=12, h=8, newline=False)
     b.add({
         "type": "barchart", "title": "Thanksgiving weekend, all agencies statewide: crashes, injuries, deaths",
-        "description": "From the 'Statewide, N people died…' line of the following year's MSHP release. Every law-enforcement agency, not just troopers. Fills after the first ETL run.",
+        "description": "From the 'Statewide, N people died…' line of the following year's MSHP release. Every law-enforcement agency, not just troopers.",
         "targets": [b.csv("mshp_holiday.csv", [("year", "Year", "string"), ("crashes", "Crashes", "number"),
                                               ("injuries", "Injuries", "number"), ("fatalities", "Deaths", "number"),
                                               ("scope", "scope", "string"), ("holiday", "holiday", "string")],

@@ -790,7 +790,7 @@
       },
       "type": "geomap",
       "title": "Wild turkeys checked in the fall firearms season, by county (latest season)",
-      "description": "MDC yearly harvest summary, 'Fall Turkey Firearms' all-counties table (Oct 1–31), joined to TIGERweb county centroids. Bubble size = birds checked. 2025 statewide = 1,950 (asserted against MDC's release). Fills after the first ETL run.",
+      "description": "MDC yearly harvest summary, 'Fall Turkey Firearms' all-counties table (Oct 1–31), joined to TIGERweb county centroids. Bubble size = birds checked. 2025 statewide = 1,950 (asserted against MDC's release).",
       "targets": [
         {
           "refId": "A",
@@ -910,7 +910,7 @@
       },
       "type": "barchart",
       "title": "Statewide fall firearms turkey harvest by season",
-      "description": "Sum of MDC county rows per season (fall firearms portion, Oct 1–31). Seasons before 2015 aren't ingested yet. Fills after the first ETL run.",
+      "description": "Sum of MDC county rows per season (fall firearms portion, Oct 1–31). Seasons before 2015 aren't ingested yet.",
       "targets": [
         {
           "refId": "A",
@@ -1200,7 +1200,7 @@
       },
       "type": "barchart",
       "title": "Missouri's rank among states in turkeys raised",
-      "description": "USDA NASS Quick Stats, turkeys raised (head), state level. Rank computed across states per year. Needs the NASS_API_KEY secret.",
+      "description": "USDA NASS Quick Stats, turkeys raised (head), state level. Rank computed across states per year.",
       "targets": [
         {
           "refId": "A",
@@ -1274,7 +1274,7 @@
       },
       "type": "table",
       "title": "Christmas tree farms by Missouri county (2022 Census of Agriculture)",
-      "description": "USDA NASS Census of Agriculture, Christmas trees, county level. '(D)' cells are withheld by NASS to avoid disclosing individual farms and stay blank. Needs the NASS_API_KEY secret.",
+      "description": "USDA NASS Census of Agriculture, Christmas trees, county level. '(D)' cells are withheld by NASS to avoid disclosing individual farms and stay blank.",
       "targets": [
         {
           "refId": "A",
@@ -1362,7 +1362,7 @@
       },
       "type": "barchart",
       "title": "Thanksgiving weekend: crashes investigated by troopers",
-      "description": "MSHP holiday counting-period releases (6 p.m. Wednesday to 11:59 p.m. Sunday). These are troop-investigated crashes only. MSHP's 'statewide' figures (all agencies) are a different measure and are kept separate. Fills after the first ETL run.",
+      "description": "MSHP holiday counting-period releases (6 p.m. Wednesday to 11:59 p.m. Sunday). These are troop-investigated crashes only. MSHP's 'statewide' figures (all agencies) are a different measure and are kept separate.",
       "targets": [
         {
           "refId": "A",
@@ -1492,7 +1492,7 @@
       },
       "type": "barchart",
       "title": "Thanksgiving weekend, all agencies statewide: crashes, injuries, deaths",
-      "description": "From the 'Statewide, N people died…' line of the following year's MSHP release. Every law-enforcement agency, not just troopers. Fills after the first ETL run.",
+      "description": "From the 'Statewide, N people died…' line of the following year's MSHP release. Every law-enforcement agency, not just troopers.",
       "targets": [
         {
           "refId": "A",
