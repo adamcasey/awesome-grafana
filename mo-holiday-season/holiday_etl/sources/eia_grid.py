@@ -9,7 +9,9 @@ from datetime import date, timedelta
 
 import pandas as pd
 
-from ..base import Source, expect, require_env
+import requests
+
+from ..base import Source, SourceUnavailable, expect, require_env
 
 API = "https://api.eia.gov/v2/electricity/rto/region-data/data/"
 RESPONDENTS = {"MISO": (40_000, 140_000), "SWPP": (15_000, 70_000)}
@@ -39,8 +41,15 @@ class EiaGrid(Source):
             "start": f"{start}T00", "end": f"{end}T23", "sort[0][column]": "period",
             "sort[0][direction]": "asc", "length": 5000,
         }
-        r = session.get(API, params=params, timeout=120)
-        r.raise_for_status()
+        try:
+            r = session.get(API, params=params, timeout=90)
+            r.raise_for_status()
+        except (requests.exceptions.RetryError, requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
+            raise SourceUnavailable(f"EIA API not answering data queries: {exc.__class__.__name__}") from exc
+        except requests.HTTPError as exc:
+            if exc.response is not None and exc.response.status_code >= 500:
+                raise SourceUnavailable(f"EIA API returned {exc.response.status_code}") from exc
+            raise
         return r.json()
 
     def normalize(self, raw) -> pd.DataFrame:

@@ -1,7 +1,8 @@
 """USDA NASS Quick Stats: Missouri turkeys raised (rank among states) and Christmas tree farms.
 
-TODO(verify): the exact short_desc strings below come from the Quick Stats vocabulary and are
-unverified from this workspace. Run `python -m holiday_etl inspect nass` and adjust.
+short_desc values below were confirmed with Quick Stats get_param_values for Missouri on 2026-11-26.
+The Census files Christmas trees under 'CUT CHRISTMAS TREES' ('CHRISTMAS TREES' matches nothing).
+Quick Stats answers 400 when a query matches no rows.
 """
 from __future__ import annotations
 
@@ -11,10 +12,12 @@ from ..base import Source, expect, require_env
 
 API = "https://quickstats.nass.usda.gov/api/api_GET/"
 QUERIES = {
-    "turkeys_raised": dict(source_desc="SURVEY", commodity_desc="TURKEYS", statisticcat_desc="PRODUCTION",
-                           unit_desc="HEAD", agg_level_desc="STATE", freq_desc="ANNUAL", year__GE="2000"),
-    "christmas_tree_ops": dict(source_desc="CENSUS", commodity_desc="CHRISTMAS TREES", statisticcat_desc="AREA GROWN",
+    "turkeys_raised": dict(source_desc="SURVEY", short_desc="TURKEYS - PRODUCTION, MEASURED IN HEAD",
+                           agg_level_desc="STATE", year__GE="2000"),
+    "christmas_tree_ops": dict(source_desc="CENSUS", short_desc="CUT CHRISTMAS TREES - OPERATIONS WITH AREA IN PRODUCTION",
                                domain_desc="TOTAL", agg_level_desc="COUNTY", state_alpha="MO"),
+    "christmas_tree_acres": dict(source_desc="CENSUS", short_desc="CUT CHRISTMAS TREES - ACRES IN PRODUCTION",
+                                 domain_desc="TOTAL", agg_level_desc="COUNTY", state_alpha="MO"),
 }
 
 
@@ -28,6 +31,8 @@ class Nass(Source):
         out = {}
         for name, q in QUERIES.items():
             r = session.get(API, params={"key": key, "format": "JSON", **q}, timeout=120)
+            if r.status_code == 400:  # Quick Stats' way of saying 'no rows match'; say which query
+                raise ValueError(f"nass: query {name!r} matched nothing: {r.text[:200]}")
             r.raise_for_status()
             out[name] = r.json().get("data", [])
         return out
