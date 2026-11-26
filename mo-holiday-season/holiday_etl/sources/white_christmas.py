@@ -70,6 +70,9 @@ class WhiteChristmas(Source):
         expect(not missing, f"white_christmas: could not detect columns {missing}; got {cols}\n{df.head(5).to_string()}")
         out = df[[m[k] for k in m]].copy()
         out.columns = list(m)
+        for c in ("station_id", "name", "state"):  # the sheet pads text cells with spaces
+            if c in out:
+                out[c] = out[c].astype(str).str.strip()
         if "state" in out:
             mo = out["state"].astype(str).str.upper().str.strip().isin(["MO", "MISSOURI"])
         else:
@@ -77,6 +80,8 @@ class WhiteChristmas(Source):
         out = out[mo].copy()
         for c in ("lat", "lon", "prob"):
             out[c] = pd.to_numeric(out[c], errors="coerce")
+        # Sheet note: '-9999 = missing due to insufficient data'. Those stations have no probability.
+        out = out[out["prob"].ne(-9999) & out["prob"].notna()].copy()
         if out["prob"].max() <= 1:  # fraction -> percent
             out["prob"] = out["prob"] * 100
         return out.rename(columns={"prob": "white_christmas_pct"})
@@ -85,3 +90,7 @@ class WhiteChristmas(Source):
         expect(len(df) >= 10, f"white_christmas: only {len(df)} Missouri stations")
         expect(df["white_christmas_pct"].between(0, 100).all(), "white_christmas: probability outside 0..100")
         expect(df["lat"].between(35.9, 40.7).all() and df["lon"].between(-95.8, -89.0).all(), "white_christmas: station outside Missouri bbox")
+        golden = {"USW00013994": 17.1, "USW00003947": 19.8}  # STL Lambert, KC Intl, read off the NCEI sheet
+        for sid, want in golden.items():
+            got = df.loc[df["station_id"] == sid, "white_christmas_pct"]
+            expect(len(got) == 1 and round(float(got.iloc[0]), 1) == want, f"white_christmas: golden {sid}={want}, got {list(got)}")

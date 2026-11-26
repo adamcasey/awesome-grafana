@@ -14,7 +14,7 @@ from datetime import date
 import pandas as pd
 from lxml import html as lxml_html
 
-from ..base import Source, expect
+from ..base import Source, expect, log
 
 PAGE = "https://mdc.mo.gov/hunting-trapping/species/turkey/turkey-reports/turkey-harvest-summaries/{year}-turkey-harvest-summary"
 TIGER = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1/query"
@@ -62,7 +62,7 @@ COLUMN_ALIASES = {  # older pages pluralize and say 'County Total'
 
 def norm_county(name: str) -> str:
     n = re.sub(r"\s+County$", "", str(name).strip(), flags=re.I)
-    n = n.replace("Saint ", "St. ").replace("St ", "St. ").replace("Ste ", "Ste. ")
+    n = n.replace("Sainte ", "Ste. ").replace("Saint ", "St. ").replace("St ", "St. ").replace("Ste ", "Ste. ")
     return n.lower()
 
 
@@ -107,10 +107,21 @@ class MdcTurkey(Source):
         cent["key"] = cent["NAME"].map(norm_county)
         rows = []
         self.missing_years = [y for y, p in raw["pages"].items() if p is None]
+        latest = max(raw["pages"])
+        self.unpublished = []
         for y, page in raw["pages"].items():
             if page is None:
                 continue
-            t = fall_firearms_table(page, y)
+            try:
+                t = fall_firearms_table(page, y)
+            except ValueError:
+                # MDC posts the fall county table weeks after the season (the 2026 page had only
+                # spring tables on 2026-11-26). Tolerated for the newest season only.
+                if y != latest:
+                    raise
+                self.unpublished.append(y)
+                log.warning("mdc_turkey: %s fall firearms table not published yet; skipped", y)
+                continue
             t.columns = [COLUMN_ALIASES.get(c, c) for c in (str(c).strip().lower().replace(" ", "_") for c in t.columns)]
             t = t[~t["county"].astype(str).str.lower().isin(["total", "totals"])].copy()
             t["year"] = y
