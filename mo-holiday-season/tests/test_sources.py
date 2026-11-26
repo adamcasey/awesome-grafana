@@ -142,3 +142,23 @@ def test_white_christmas_rejects_html_landing_page():
     from holiday_etl.sources.white_christmas import WhiteChristmas
     with pytest.raises(ValueError, match="expected an XLSX"):
         WhiteChristmas()._frame(b"<!DOCTYPE html><html>...")
+
+
+def test_mdc_title_variants():
+    for heading, year in [("Fall Turkey Firearms", 2016), ("2017 Fall Turkey Firearm", 2017),
+                          ("Title2022 Fall Turkey Firearms", 2022), ("2025 Fall Turkey Firearms", 2025)]:
+        page = MDC_PAGE_2015.replace("<h2>Fall Turkey Firearms</h2>", f"<h2>{heading}</h2>")
+        assert list(fall_firearms_table(page, year)["County"]) == ["Greene", "Totals"], heading
+
+
+def test_white_christmas_finds_header_below_title_rows(tmp_path):
+    from holiday_etl.sources.white_christmas import WhiteChristmas
+    rows = [["", "", "", "", "", "Snow Statistics for Christmas Day", ""], [""] * 7,
+            ["GHCN ID", "Station Name", "State", "Latitude", "Longitude", "Probability of >= 1 inch", "Mean depth"],
+            ["USW00013994", "ST LOUIS LAMBERT INTL AP", "MO", 38.75, -90.37, 0.23, 0.5],
+            ["USW00014739", "BOSTON LOGAN", "MA", 42.36, -71.01, 0.2, 1.0]]
+    path = tmp_path / "wc.xlsx"
+    pd.DataFrame(rows).to_excel(path, header=False, index=False)
+    src = WhiteChristmas()
+    df = src.normalize(path.read_bytes())
+    assert list(df["station_id"]) == ["USW00013994"] and df["white_christmas_pct"].iloc[0] == 23.0

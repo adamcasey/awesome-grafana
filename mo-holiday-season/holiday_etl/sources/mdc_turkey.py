@@ -18,26 +18,30 @@ from ..base import Source, expect
 
 PAGE = "https://mdc.mo.gov/hunting-trapping/species/turkey/turkey-reports/turkey-harvest-summaries/{year}-turkey-harvest-summary"
 TIGER = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1/query"
-GOLDEN_TOTAL = {2015: 6158, 2025: 1950}  # both read off MDC's own Total rows
+GOLDEN_TOTAL = {2015: 6158, 2016: 3698, 2017: 2901, 2019: 1953, 2022: 1844, 2025: 1950}  # MDC pages' own Total rows
 FIRST_YEAR = 2015  # earliest summary page MDC links (slug pattern confirmed 2015-2026)
 
 
 def fall_firearms_table(page_html: str, year: int) -> pd.DataFrame:
     """Return the all-counties fall firearms table from one summary page.
 
-    Two layouts exist: 2024+ titles read '2025 Fall Turkey Firearms' with a 'Top 5 Counties'
-    mini-table first; 2015-era titles read just 'Fall Turkey Firearms'. The section ends at the
-    next Spring/Archery/Youth heading; the largest table inside it is the all-counties table.
+    Section headings drift by year (verified on MDC pages): 'Fall Turkey Firearms' (2015-16),
+    '2017 Fall Turkey Firearm' (singular, 2017/2019), 'Title2022 Fall Turkey Firearms' (no space
+    after the Drupal 'Title' label), '2025 Fall Turkey Firearms'. Each section holds a 'Top 5'
+    table and an all-counties table; the section ends at the next Spring/Archery/Youth heading
+    and the largest table inside it is the all-counties one.
     """
     doc = lxml_html.fromstring(page_html)
-    title_re = re.compile(rf"^(?:{year}\s+)?Fall\s+Turkey\s+Firearms$", re.I)
+    title_re = re.compile(rf"^(?:Title\s*)?(?:{year}\s*)?Fall\s+Turkey\s+Firearms?(?:\s+Report)?$", re.I)
     in_section, candidates = False, []
     for el in doc.iter():
         if el.tag == "table":
             if in_section:
                 candidates.append(el)
             continue
-        text = " ".join((el.text or "").split())
+        if not isinstance(el.tag, str) or el.find(".//table") is not None:
+            continue  # comments, or containers whose text would swallow a whole section
+        text = " ".join(el.text_content().split())
         if not text or len(text) > 80:
             continue
         if title_re.match(text):
