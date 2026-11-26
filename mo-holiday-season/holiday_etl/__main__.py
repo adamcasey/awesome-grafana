@@ -8,7 +8,7 @@ import logging
 import os
 import sys
 
-from .base import http_session
+from .base import SourceUnavailable, http_session
 from .sources import REGISTRY
 
 
@@ -40,6 +40,8 @@ def main(argv=None) -> int:
             continue
         try:
             src.run(session)
+        except SourceUnavailable as exc:
+            logging.warning("%s UNAVAILABLE (previous data kept): %s", name, exc)
         except Exception as exc:  # report every source, then fail the job
             logging.error("%s FAILED: %s", name, exc)
             failed.append(name)

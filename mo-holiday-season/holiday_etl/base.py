@@ -20,6 +20,11 @@ USER_AGENT = "awesome-grafana-mo-holiday-season/0.1 (+https://github.com/)"
 log = logging.getLogger("holiday_etl")
 
 
+class SourceUnavailable(Exception):
+    """Upstream is down (5xx/timeouts after retries). The previous data file is kept and the run
+    reports it, but the job does not fail: there is nothing in this repo to fix."""
+
+
 class ValidationError(Exception):
     """Raised when a source fails a plausibility or golden-number check. Never swallowed."""
 
