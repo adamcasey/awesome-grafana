@@ -1,0 +1,1618 @@
+{
+  "title": "Missouri's Holiday Season, by the Numbers 🦃🎄",
+  "uid": "mo-holiday-season",
+  "tags": [
+    "missouri",
+    "holiday",
+    "awesome-grafana",
+    "linkedin"
+  ],
+  "timezone": "America/Chicago",
+  "editable": true,
+  "graphTooltip": 0,
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true
+  },
+  "refresh": "",
+  "schemaVersion": 39,
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "links": [
+    {
+      "title": "Code & ETL on GitHub",
+      "type": "link",
+      "targetBlank": true,
+      "url": "https://github.com/adamcasey/awesome-grafana/tree/main/mo-holiday-season"
+    }
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "text",
+      "title": "",
+      "transparent": true,
+      "options": {
+        "mode": "html",
+        "content": "<div style='text-align:center;padding:6px 0;background:linear-gradient(90deg,#7b1d1d,#1E5631,#7b1d1d);border-radius:10px;color:#fff'><div style='font-size:30px;font-weight:800;letter-spacing:.5px'>🦃 Missouri's Holiday Season, by the Numbers 🎄</div><div style='font-size:14px;opacity:.9'>Thanksgiving → Christmas, told with public data: Hallmark (made in Kansas City), NOAA snow records, MDC turkey harvests, BLS prices, EIA grid demand and Highway Patrol counts</div></div>"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 3
+      }
+    },
+    {
+      "id": 2,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "stat",
+      "title": "🎄 Christmas Day is…",
+      "description": "Countdown to Dec 25, 2026 (America/Chicago). Rendered with Grafana's 'from now' unit.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "source": "inline",
+          "parser": "backend",
+          "format": "table",
+          "data": "christmas\n1798178400000",
+          "columns": [
+            {
+              "selector": "christmas",
+              "text": "Christmas",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dateTimeFromNow",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#C0392B"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 3,
+        "w": 5,
+        "h": 5
+      }
+    },
+    {
+      "id": 3,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "stat",
+      "title": "🎬 New Hallmark films, 2026",
+      "description": "Countdown to Christmas new original premieres on Hallmark Channel only, the most ever. Source: Hallmark lineup announcement (Sept 2026) as reported by TV Guide.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "parser": "backend",
+          "format": "table",
+          "columns": [
+            {
+              "selector": "year",
+              "text": "Season",
+              "type": "string"
+            },
+            {
+              "selector": "hc_premieres",
+              "text": "Hallmark Channel",
+              "type": "number"
+            },
+            {
+              "selector": "other_networks",
+              "text": "Sister network (HMM / Hallmark Mystery)",
+              "type": "number"
+            }
+          ],
+          "source": "url",
+          "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/hallmark_premieres.csv",
+          "url_options": {
+            "method": "GET"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#D4AC0D"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "Hallmark Channel",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
+      },
+      "gridPos": {
+        "x": 5,
+        "y": 3,
+        "w": 5,
+        "h": 5
+      }
+    },
+    {
+      "id": 4,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "stat",
+      "title": "❄️ STL white Christmases, 1991–2020",
+      "description": "Share of Dec 25 mornings with ≥1\" of snow on the ground at St. Louis Lambert (GHCN-Daily USW00013994): 7 of 30 years. Same window as NOAA's climate normals.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "parser": "backend",
+          "format": "table",
+          "columns": [
+            {
+              "selector": "year",
+              "text": "year",
+              "type": "number"
+            },
+            {
+              "selector": "station",
+              "text": "station",
+              "type": "string"
+            },
+            {
+              "selector": "white_christmas",
+              "text": "white",
+              "type": "number"
+            }
+          ],
+          "filterExpression": "station == 'STL' && year >= 1991 && year <= 2020",
+          "source": "url",
+          "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/christmas_snow.csv",
+          "url_options": {
+            "method": "GET"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#2E86C1"
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "white",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
+      },
+      "gridPos": {
+        "x": 10,
+        "y": 3,
+        "w": 5,
+        "h": 5
+      }
+    },
+    {
+      "id": 5,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "stat",
+      "title": "🦃 Frozen turkey, $/lb (U.S.)",
+      "description": "BLS average price, U.S. city average (FRED APU0000706111), latest month. BLS publishes no Missouri-only series.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "source": "url",
+          "parser": "backend",
+          "format": "table",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=APU0000706111",
+          "url_options": {
+            "method": "GET"
+          },
+          "columns": [
+            {
+              "selector": "APU0000706111",
+              "text": "$/lb",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#1E8449"
+          },
+          "decimals": 2
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
+      },
+      "gridPos": {
+        "x": 15,
+        "y": 3,
+        "w": 5,
+        "h": 5
+      }
+    },
+    {
+      "id": 6,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "stat",
+      "title": "📺 Hallmark films since 2018",
+      "description": "Sum of verified Hallmark Channel Countdown premieres, 2018–2026 (curated series; see the hero panel).",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "parser": "backend",
+          "format": "table",
+          "columns": [
+            {
+              "selector": "year",
+              "text": "Season",
+              "type": "string"
+            },
+            {
+              "selector": "hc_premieres",
+              "text": "Hallmark Channel",
+              "type": "number"
+            },
+            {
+              "selector": "other_networks",
+              "text": "Sister network (HMM / Hallmark Mystery)",
+              "type": "number"
+            },
+            {
+              "selector": "year",
+              "text": "yr",
+              "type": "number"
+            }
+          ],
+          "filterExpression": "yr >= 2018",
+          "source": "url",
+          "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/hallmark_premieres.csv",
+          "url_options": {
+            "method": "GET"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#C0392B"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "Hallmark Channel",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 3,
+        "w": 4,
+        "h": 5
+      }
+    },
+    {
+      "id": 7,
+      "type": "row",
+      "title": "🎬 The Hallmark Christmas movie machine, made in Kansas City",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 8,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "barchart",
+      "title": "New original Christmas movies per season: Hallmark Channel 'Countdown to Christmas'",
+      "description": "Hallmark Channel new original premieres during Countdown to Christmas (gold), stacked with the sister linear network's Christmas premieres (red; Hallmark Movies & Mysteries / Hallmark Mystery). Streaming-only titles are excluded. Curated from Hallmark announcements: each season's source URL is in curated/hallmark_premieres.csv. 2021 and 2023 are counted from the published schedules. 2010–2017 are not yet sourced, so they are omitted (not zero). Blank red = sister-network count not reliably reported.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "parser": "backend",
+          "format": "table",
+          "columns": [
+            {
+              "selector": "year",
+              "text": "Season",
+              "type": "string"
+            },
+            {
+              "selector": "hc_premieres",
+              "text": "Hallmark Channel",
+              "type": "number"
+            },
+            {
+              "selector": "other_networks",
+              "text": "Sister network (HMM / Hallmark Mystery)",
+              "type": "number"
+            }
+          ],
+          "source": "url",
+          "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/hallmark_premieres.csv",
+          "url_options": {
+            "method": "GET"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#D4AC0D"
+          },
+          "custom": {
+            "fillOpacity": 90,
+            "lineWidth": 0
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sister network (HMM / Hallmark Mystery)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#C0392B"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "stacking": "normal",
+        "showValue": "always",
+        "xField": "Season",
+        "barWidth": 0.8,
+        "groupWidth": 0.7,
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi"
+        },
+        "xTickLabelRotation": 0
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 9,
+        "w": 17,
+        "h": 11
+      }
+    },
+    {
+      "id": 9,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "text",
+      "title": "Reading the chart",
+      "transparent": false,
+      "options": {
+        "mode": "html",
+        "content": "<div style='padding:4px 10px;font-size:14px;line-height:1.5'><b style='font-size:18px;color:#D4AC0D'>4 → 34</b><br>Countdown to Christmas <i>started with just four original movies</i> in 2009 (Hallmark). In 2026 Hallmark Channel is premiering <b>34</b>, a record for the channel.<br><br><b>2025's dip to 24:</b> that season the sister network (Hallmark Mystery) launched <b>no</b> new Christmas films, and Hallmark Channel premiered 24.<br><br><b>Why curated?</b> Wikidata tags only 69 Hallmark Channel Christmas films <i>in total</i>, and press totals mix networks (2018 is reported as 34, 36, 37 or 38). Every bar here has a single definition and a cited source.</div>"
+      },
+      "gridPos": {
+        "x": 17,
+        "y": 9,
+        "w": 7,
+        "h": 11
+      }
+    },
+    {
+      "id": 10,
+      "type": "row",
+      "title": "❄️ I'm dreaming of a white Christmas… am I, though?",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 20,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 11,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "barchart",
+      "title": "St. Louis Lambert: snow on the ground Christmas morning, 1938–2025",
+      "description": "Dec 25 snow depth (SNWD, inches), NCEI GHCN-Daily station USW00013994. Blue bars clear NOAA's white-Christmas bar (≥1 inch on the ground). Missing observations are gaps, not zeros. (1940 is missing.) 2026 lands after Dec 25.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "parser": "backend",
+          "format": "table",
+          "columns": [
+            {
+              "selector": "year",
+              "text": "Year",
+              "type": "string"
+            },
+            {
+              "selector": "station",
+              "text": "Station",
+              "type": "string"
+            },
+            {
+              "selector": "snow_depth_in",
+              "text": "Snow depth (in)",
+              "type": "number"
+            }
+          ],
+          "filterExpression": "station == 'STL'",
+          "source": "url",
+          "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/christmas_snow.csv",
+          "url_options": {
+            "method": "GET"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "lengthin",
+          "min": 0,
+          "decimals": 1,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#7F8C8D",
+                "value": null
+              },
+              {
+                "color": "#5DADE2",
+                "value": 1
+              }
+            ]
+          },
+          "custom": {
+            "fillOpacity": 90,
+            "lineWidth": 0,
+            "thresholdsStyle": {
+              "mode": "dashed"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Year"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "xField": "Year",
+        "showValue": "never",
+        "barWidth": 0.9,
+        "xTickLabelSpacing": 100,
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 21,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "id": 12,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "barchart",
+      "title": "Kansas City International: snow on the ground Christmas morning, 1972–2025",
+      "description": "Dec 25 snow depth (SNWD, inches), NCEI GHCN-Daily station USW00003947. Blue bars clear NOAA's white-Christmas bar (≥1 inch on the ground). Missing observations are gaps, not zeros. 2026 lands after Dec 25.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "parser": "backend",
+          "format": "table",
+          "columns": [
+            {
+              "selector": "year",
+              "text": "Year",
+              "type": "string"
+            },
+            {
+              "selector": "station",
+              "text": "Station",
+              "type": "string"
+            },
+            {
+              "selector": "snow_depth_in",
+              "text": "Snow depth (in)",
+              "type": "number"
+            }
+          ],
+          "filterExpression": "station == 'KC'",
+          "source": "url",
+          "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/christmas_snow.csv",
+          "url_options": {
+            "method": "GET"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "lengthin",
+          "min": 0,
+          "decimals": 1,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#7F8C8D",
+                "value": null
+              },
+              {
+                "color": "#5DADE2",
+                "value": 1
+              }
+            ]
+          },
+          "custom": {
+            "fillOpacity": 90,
+            "lineWidth": 0,
+            "thresholdsStyle": {
+              "mode": "dashed"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Year"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "xField": "Year",
+        "showValue": "never",
+        "barWidth": 0.9,
+        "xTickLabelSpacing": 100,
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 21,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "id": 13,
+      "type": "row",
+      "title": "🦃 Thanksgiving: from the Missouri woods to the dinner table",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 29,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 14,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "geomap",
+      "title": "Wild turkeys checked in the fall firearms season, by county (latest season)",
+      "description": "MDC yearly harvest summary, 'Fall Turkey Firearms' all-counties table (Oct 1–31), joined to TIGERweb county centroids. Bubble size = birds checked. 2025 statewide = 1,950 (asserted against MDC's release). Fills after the first ETL run.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "parser": "backend",
+          "format": "table",
+          "columns": [
+            {
+              "selector": "county",
+              "text": "County",
+              "type": "string"
+            },
+            {
+              "selector": "lat",
+              "text": "lat",
+              "type": "number"
+            },
+            {
+              "selector": "lon",
+              "text": "lon",
+              "type": "number"
+            },
+            {
+              "selector": "total",
+              "text": "Turkeys",
+              "type": "number"
+            },
+            {
+              "selector": "year",
+              "text": "year",
+              "type": "number"
+            }
+          ],
+          "filterExpression": "year == 2025",
+          "source": "url",
+          "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/turkey_fall_harvest.csv",
+          "url_options": {
+            "method": "GET"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#A04000"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "view": {
+          "id": "coords",
+          "lat": 38.4,
+          "lon": -92.4,
+          "zoom": 6
+        },
+        "controls": {
+          "showZoom": true,
+          "mouseWheelZoom": false
+        },
+        "basemap": {
+          "type": "carto",
+          "config": {
+            "theme": "auto",
+            "showLabels": true
+          }
+        },
+        "layers": [
+          {
+            "type": "markers",
+            "name": "Turkeys",
+            "location": {
+              "mode": "coords",
+              "latitude": "lat",
+              "longitude": "lon"
+            },
+            "config": {
+              "style": {
+                "size": {
+                  "field": "Turkeys",
+                  "min": 3,
+                  "max": 22,
+                  "fixed": 5
+                },
+                "color": {
+                  "fixed": "#A04000"
+                },
+                "opacity": 0.75,
+                "symbol": {
+                  "mode": "fixed",
+                  "fixed": "img/icons/marker/circle.svg"
+                }
+              },
+              "showLegend": true
+            },
+            "tooltip": true
+          }
+        ]
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 30,
+        "w": 10,
+        "h": 11
+      }
+    },
+    {
+      "id": 15,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "barchart",
+      "title": "Statewide fall firearms turkey harvest by season",
+      "description": "Sum of MDC county rows per season (fall firearms portion, Oct 1–31). Seasons before 2015 aren't ingested yet. Fills after the first ETL run.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "parser": "backend",
+          "format": "table",
+          "columns": [
+            {
+              "selector": "year",
+              "text": "Season",
+              "type": "string"
+            },
+            {
+              "selector": "total",
+              "text": "Turkeys",
+              "type": "number"
+            }
+          ],
+          "source": "url",
+          "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/turkey_fall_harvest.csv",
+          "url_options": {
+            "method": "GET"
+          }
+        }
+      ],
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Season": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Turkeys": {
+                "aggregations": [
+                  "sum"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#A04000"
+          },
+          "custom": {
+            "fillOpacity": 85,
+            "lineWidth": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "xField": "Season",
+        "showValue": "auto",
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "gridPos": {
+        "x": 10,
+        "y": 30,
+        "w": 7,
+        "h": 11
+      }
+    },
+    {
+      "id": 16,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "timeseries",
+      "title": "What the store bird costs: frozen whole turkey, $/lb",
+      "description": "BLS CPI average price, frozen whole turkey per lb, U.S. city average (FRED APU0000706111). National series; there is no Missouri-only series.",
+      "timeFrom": "20y",
+      "hideTimeOverride": false,
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "source": "url",
+          "parser": "backend",
+          "format": "timeseries",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=APU0000706111",
+          "url_options": {
+            "method": "GET"
+          },
+          "columns": [
+            {
+              "selector": "observation_date",
+              "text": "Month",
+              "type": "timestamp",
+              "timestampFormat": "2006-01-02"
+            },
+            {
+              "selector": "APU0000706111",
+              "text": "$/lb",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "decimals": 2,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#1E8449"
+          },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "spanNulls": true
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "gridPos": {
+        "x": 17,
+        "y": 30,
+        "w": 7,
+        "h": 11
+      }
+    },
+    {
+      "id": 17,
+      "type": "row",
+      "title": "⚡ The grid takes Thanksgiving off (then the lights go up)",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 41,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 18,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "timeseries",
+      "title": "Hourly electricity demand: Thanksgiving week vs. the week before",
+      "description": "EIA-930 hourly demand (MW) for MISO (serves eastern Missouri) and SPP (western Missouri). The baseline week is shifted +7 days so the same weekdays overlay. Needs the EIA_API_KEY secret; the panel is empty until the ETL has run with the key.",
+      "timeFrom": "now-14d",
+      "hideTimeOverride": false,
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "parser": "backend",
+          "format": "table",
+          "columns": [
+            {
+              "selector": "aligned_time",
+              "text": "time",
+              "type": "timestamp"
+            },
+            {
+              "selector": "respondent",
+              "text": "grid",
+              "type": "string"
+            },
+            {
+              "selector": "week",
+              "text": "week",
+              "type": "string"
+            },
+            {
+              "selector": "demand_mw",
+              "text": "MW",
+              "type": "number"
+            }
+          ],
+          "source": "url",
+          "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/grid_demand_holiday.csv",
+          "url_options": {
+            "method": "GET"
+          }
+        }
+      ],
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "grid",
+              "week"
+            ],
+            "keepFields": false
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "custom": {
+            "lineWidth": 2
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 42,
+        "w": 24,
+        "h": 9
+      }
+    },
+    {
+      "id": 19,
+      "type": "row",
+      "title": "🎄 Farms behind the feast and the tree",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 51,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 20,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "barchart",
+      "title": "Missouri's rank among states in turkeys raised",
+      "description": "USDA NASS Quick Stats, turkeys raised (head), state level. Rank computed across states per year. Needs the NASS_API_KEY secret.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "parser": "backend",
+          "format": "table",
+          "columns": [
+            {
+              "selector": "year",
+              "text": "Year",
+              "type": "string"
+            },
+            {
+              "selector": "rank",
+              "text": "Rank",
+              "type": "number"
+            },
+            {
+              "selector": "series",
+              "text": "series",
+              "type": "string"
+            },
+            {
+              "selector": "state_alpha",
+              "text": "state_alpha",
+              "type": "string"
+            }
+          ],
+          "filterExpression": "series == 'turkeys_raised' && state_alpha == 'MO'",
+          "source": "url",
+          "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/nass_mo.csv",
+          "url_options": {
+            "method": "GET"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#D4AC0D"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "xField": "Year",
+        "showValue": "always",
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 52,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "id": 21,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "table",
+      "title": "Christmas tree farms by Missouri county (Census of Agriculture)",
+      "description": "USDA NASS Census of Agriculture, Christmas trees, county level. '(D)' cells are withheld by NASS to avoid disclosing individual farms and stay blank. Needs the NASS_API_KEY secret.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "parser": "backend",
+          "format": "table",
+          "columns": [
+            {
+              "selector": "county_name",
+              "text": "County",
+              "type": "string"
+            },
+            {
+              "selector": "year",
+              "text": "Census",
+              "type": "string"
+            },
+            {
+              "selector": "short_desc",
+              "text": "Measure",
+              "type": "string"
+            },
+            {
+              "selector": "value_num",
+              "text": "Value",
+              "type": "number"
+            },
+            {
+              "selector": "series",
+              "text": "series",
+              "type": "string"
+            }
+          ],
+          "filterExpression": "series == 'christmas_tree_ops'",
+          "source": "url",
+          "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/nass_mo.csv",
+          "url_options": {
+            "method": "GET"
+          }
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Value",
+            "desc": true
+          }
+        ]
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 52,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "id": 22,
+      "type": "row",
+      "title": "🚗 Drive home safe: Highway Patrol holiday counting periods",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 60,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 23,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "barchart",
+      "title": "Thanksgiving weekend: crashes investigated by troopers",
+      "description": "MSHP holiday counting-period releases (6 p.m. Wednesday to 11:59 p.m. Sunday). These are troop-investigated crashes only. MSHP's 'statewide' figures (all agencies) are a different measure and are kept separate. Fills after the first ETL run.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "parser": "backend",
+          "format": "table",
+          "columns": [
+            {
+              "selector": "year",
+              "text": "Year",
+              "type": "string"
+            },
+            {
+              "selector": "crashes",
+              "text": "Crashes",
+              "type": "number"
+            },
+            {
+              "selector": "injuries",
+              "text": "Injuries",
+              "type": "number"
+            },
+            {
+              "selector": "dwi_arrests",
+              "text": "DWI arrests",
+              "type": "number"
+            },
+            {
+              "selector": "scope",
+              "text": "scope",
+              "type": "string"
+            },
+            {
+              "selector": "holiday",
+              "text": "holiday",
+              "type": "string"
+            }
+          ],
+          "filterExpression": "scope == 'troop' && holiday == 'thanksgiving'",
+          "source": "url",
+          "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/mshp_holiday.csv",
+          "url_options": {
+            "method": "GET"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 85,
+            "lineWidth": 0
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Crashes"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#7F8C8D"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Injuries"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#D4AC0D"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "DWI arrests"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#C0392B"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "xField": "Year",
+        "showValue": "always",
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 61,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "id": 24,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "barchart",
+      "title": "Thanksgiving weekend, all agencies statewide: crashes, injuries, deaths",
+      "description": "From the 'Statewide, N people died…' line of the following year's MSHP release. Every law-enforcement agency, not just troopers. Fills after the first ETL run.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "grafanacloud-infinity"
+          },
+          "type": "csv",
+          "parser": "backend",
+          "format": "table",
+          "columns": [
+            {
+              "selector": "year",
+              "text": "Year",
+              "type": "string"
+            },
+            {
+              "selector": "crashes",
+              "text": "Crashes",
+              "type": "number"
+            },
+            {
+              "selector": "injuries",
+              "text": "Injuries",
+              "type": "number"
+            },
+            {
+              "selector": "fatalities",
+              "text": "Deaths",
+              "type": "number"
+            },
+            {
+              "selector": "scope",
+              "text": "scope",
+              "type": "string"
+            },
+            {
+              "selector": "holiday",
+              "text": "holiday",
+              "type": "string"
+            }
+          ],
+          "filterExpression": "scope == 'statewide_all_agencies' && holiday == 'thanksgiving'",
+          "source": "url",
+          "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/mshp_holiday.csv",
+          "url_options": {
+            "method": "GET"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 85,
+            "lineWidth": 0
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Crashes"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#7F8C8D"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Injuries"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#D4AC0D"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Deaths"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#C0392B"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "xField": "Year",
+        "showValue": "always",
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 61,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "id": 25,
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "grafanacloud-infinity"
+      },
+      "type": "text",
+      "title": "",
+      "transparent": true,
+      "options": {
+        "mode": "html",
+        "content": "<div style='font-size:11px;opacity:.75;line-height:1.4'><b>Sources:</b> Hallmark Channel lineup announcements (curated, per-season URLs in <code>curated/hallmark_premieres.csv</code>) · NOAA NCEI GHCN-Daily (USW00013994, USW00003947) · Missouri Department of Conservation turkey harvest summaries · U.S. Census TIGERweb · BLS via FRED (APU0000706111) · EIA-930 · USDA NASS Quick Stats · Missouri State Highway Patrol releases.<br><b>Definitions:</b> white Christmas = ≥1\" of snow on the ground Dec 25 (NOAA). Hallmark counts = new originals on Hallmark Channel; the sister linear network is stacked separately; streaming-only titles are excluded. MSHP troop and statewide figures are different measures.<br>Code &amp; ETL: github.com/adamcasey/awesome-grafana/tree/main/mo-holiday-season</div>"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 69,
+        "w": 24,
+        "h": 3
+      }
+    }
+  ]
+}
