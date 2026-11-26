@@ -47,6 +47,37 @@ jobs:
             "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1/query?where=STATE%3D%2729%27&outFields=NAME,GEOID,CENTLAT,CENTLON&returnGeometry=false&f=json"
           curl -sSL -A "$UA" -o raw/white_christmas.xlsx -w "ncei %{http_code} %{size_download}\n" \
             "https://www.ncei.noaa.gov/sites/default/files/2021-12/Christmas_day_snow_statistics_1991-2020_updated.xlsx"
+      - name: Probe keyed APIs (keys are scrubbed from saved output)
+        if: ${{ inputs.snapshot }}
+        env:
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+          NASS_API_KEY: ${{ secrets.NASS_API_KEY }}
+        run: |
+          scrub() { sed -e "s/${EIA_API_KEY:-__none__}/***/g" -e "s/${NASS_API_KEY:-__none__}/***/g"; }
+          N="https://quickstats.nass.usda.gov/api"
+          for p in statisticcat_desc short_desc unit_desc domain_desc; do
+            curl -sS -G "$N/get_param_values/" --data-urlencode "key=$NASS_API_KEY" --data-urlencode "param=$p" \
+              --data-urlencode "commodity_desc=CHRISTMAS TREES" --data-urlencode "state_alpha=MO" \
+              --data-urlencode "source_desc=CENSUS" | scrub > raw/nass_xmas_$p.json
+          done
+          curl -sS -G "$N/get_param_values/" --data-urlencode "key=$NASS_API_KEY" --data-urlencode "param=short_desc" \
+            --data-urlencode "commodity_desc=TURKEYS" --data-urlencode "state_alpha=MO" --data-urlencode "source_desc=SURVEY" \
+            | scrub > raw/nass_turkeys_short_desc.json
+          E="https://api.eia.gov/v2/electricity/rto/region-data/data/"
+          probe() {  # name, then extra query args
+            name=$1; shift
+            curl -sS -G "$E" --data-urlencode "api_key=$EIA_API_KEY" --data-urlencode "frequency=hourly" \
+              --data-urlencode "data[0]=value" --data-urlencode "facets[type][]=D" "$@" \
+              -o raw/eia_$name.json -w "$name %{http_code} %{time_total}s %{size_download}B\n" | tee -a raw/eia_probe_summary.txt
+            scrub < raw/eia_$name.json > raw/eia_$name.tmp && mv raw/eia_$name.tmp raw/eia_$name.json
+          }
+          probe miso_2d  --data-urlencode "facets[respondent][]=MISO" --data-urlencode "start=2026-11-20T00" --data-urlencode "end=2026-11-21T23"
+          probe miso_15d --data-urlencode "facets[respondent][]=MISO" --data-urlencode "start=2026-11-16T00" --data-urlencode "end=2026-11-26T23" --data-urlencode "length=5000"
+          probe swpp_15d --data-urlencode "facets[respondent][]=SWPP" --data-urlencode "start=2026-11-16T00" --data-urlencode "end=2026-11-26T23" --data-urlencode "length=5000"
+          probe both_sorted --data-urlencode "facets[respondent][]=MISO" --data-urlencode "facets[respondent][]=SWPP" \
+            --data-urlencode "start=2026-11-16T00" --data-urlencode "end=2026-11-26T23" --data-urlencode "sort[0][column]=period" \
+            --data-urlencode "sort[0][direction]=asc" --data-urlencode "length=5000"
+          probe miso_2025 --data-urlencode "facets[respondent][]=MISO" --data-urlencode "start=2025-11-17T00" --data-urlencode "end=2025-12-01T23" --data-urlencode "length=5000"
       - name: Publish snapshot to a throwaway branch
         if: ${{ inputs.snapshot }}
         run: |
