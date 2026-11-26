@@ -91,7 +91,7 @@ def build(inline: bool) -> dict:
     b.add(text(
         "<div style='text-align:center;padding:6px 0;background:linear-gradient(90deg,#7b1d1d,#1E5631,#7b1d1d);"
         "border-radius:10px;color:#fff'>"
-        "<div style='font-size:30px;font-weight:800;letter-spacing:.5px'>🦃 Missouri's Holiday Season, by the Numbers 🎄</div>"
+        "<div style='font-size:30px;font-weight:800;letter-spacing:.5px'>Missouri's Holiday Season, by the Numbers</div>"
         "<div style='font-size:14px;opacity:.9'>Thanksgiving → Christmas, told with public data: Hallmark (made in Kansas City), "
         "NOAA snow records, MDC turkey harvests, BLS prices, EIA grid demand and Highway Patrol counts</div></div>"), w=24, h=3)
 
@@ -100,25 +100,25 @@ def build(inline: bool) -> dict:
     snow_cols = [("year", "Year", "string"), ("station", "Station", "string"), ("snow_depth_in", "Snow depth (in)", "number")]
 
     stats = [
-        (stat("🎄 Christmas Day is…", "Countdown to Dec 25, 2026 (America/Chicago). Rendered with Grafana's 'from now' unit.",
+        (stat("Christmas Day is…", "Countdown to Dec 25, 2026 (America/Chicago). Rendered with Grafana's 'from now' unit.",
               [{"refId": "A", "datasource": DS, "type": "csv", "source": "inline", "parser": "backend", "format": "table",
                 "data": f"christmas\n{CHRISTMAS_MS}", "columns": [{"selector": "christmas", "text": "Christmas", "type": "number"}]}],
               unit="dateTimeFromNow", color=RED), 5),
-        (stat("🎬 New Hallmark films, 2026",
+        (stat("New Hallmark films, 2026",
               "Countdown to Christmas new original premieres on Hallmark Channel only, the most ever. Source: Hallmark lineup announcement (Sept 2026) as reported by TV Guide.",
               [b.csv("hallmark_premieres.csv", hallmark_cols)], color=GOLD, field="Hallmark Channel"), 5),
-        (stat("❄️ STL white Christmases, 1991–2020",
+        (stat("STL white Christmases, 1991–2020",
               "Share of Dec 25 mornings with ≥1\" of snow on the ground at St. Louis Lambert (GHCN-Daily USW00013994): 7 of 30 years. Same window as NOAA's climate normals.",
               [b.csv("christmas_snow.csv", [("year", "year", "number"), ("station", "station", "string"), ("white_christmas", "white", "number")],
                      filter_expr="station == 'STL' && year >= 1991 && year <= 2020")],
               unit="percentunit", color="#2E86C1", decimals=0, reduce="mean", field="white"), 5),
-        (stat("🦃 Frozen turkey, $/lb (U.S.)",
+        (stat("Frozen turkey, $/lb (U.S.)",
               "BLS average price, U.S. city average (FRED APU0000706111), latest month. BLS publishes no Missouri-only series.",
               [{"refId": "A", "datasource": DS, "type": "csv", "source": "url", "parser": "backend", "format": "table",
                 "url": FRED, "url_options": {"method": "GET"},
                 "columns": [{"selector": "APU0000706111", "text": "$/lb", "type": "number"}]}],
               unit="currencyUSD", color=PINE, decimals=2), 5),
-        (stat("📺 Hallmark films since 2018",
+        (stat("Hallmark films since 2018",
               "Sum of verified Hallmark Channel Countdown premieres, 2018–2026 (curated series; see the hero panel).",
               [b.csv("hallmark_premieres.csv", hallmark_cols + [("year", "yr", "number")], filter_expr="yr >= 2018")],
               color=RED, reduce="sum", field="Hallmark Channel"), 4),
@@ -129,7 +129,7 @@ def build(inline: bool) -> dict:
         x += w
 
     # ---------------------------------------------------------------- hero
-    b.row("🎬 The Hallmark Christmas movie machine, made in Kansas City")
+    b.row("The Hallmark Christmas movie machine, made in Kansas City")
     hero = {
         "type": "barchart", "title": "New original Christmas movies per season: Hallmark Channel 'Countdown to Christmas'",
         "description": ("Hallmark Channel new original premieres during Countdown to Christmas (gold), stacked with the sister linear network's "
@@ -157,7 +157,7 @@ def build(inline: bool) -> dict:
         "</div>", title="Reading the chart", transparent=False), w=7, h=11, x=17)
 
     # ---------------------------------------------------------------- snow
-    b.row("❄️ I'm dreaming of a white Christmas… am I, though?")
+    b.row("I'm dreaming of a white Christmas… am I, though?")
     for i, (key, label, since) in enumerate([("STL", "St. Louis Lambert", 1938), ("KC", "Kansas City International", 1972)]):
         b.add({
             "type": "barchart", "title": f"{label}: snow on the ground Christmas morning, {since}–2025",
@@ -176,7 +176,7 @@ def build(inline: bool) -> dict:
         }, w=12, h=8, x=12 * i, newline=(i == 1))
 
     # -------------------------------------------------------- thanksgiving
-    b.row("🦃 Thanksgiving: from the Missouri woods to the dinner table")
+    b.row("Thanksgiving: from the Missouri woods to the dinner table")
     b.add({
         "type": "geomap", "title": "Wild turkeys checked in the fall firearms season, by county (latest season)",
         "description": ("MDC yearly harvest summary, 'Fall Turkey Firearms' all-counties table (Oct 1–31), joined to TIGERweb county centroids. "
@@ -217,21 +217,24 @@ def build(inline: bool) -> dict:
     }, w=7, h=11, x=17)
 
     # ---------------------------------------------------------------- grid
-    b.row("⚡ The grid takes Thanksgiving off (then the lights go up)")
+    b.row("The grid takes Thanksgiving off (then the lights go up)")
     b.add({
         "type": "timeseries", "title": "Hourly electricity demand: Thanksgiving week vs. the week before",
         "description": ("EIA-930 hourly demand (MW) for MISO (serves eastern Missouri) and SPP (western Missouri). The baseline week is shifted +7 days so the same weekdays overlay. "
-                        "Needs the EIA_API_KEY secret; the panel is empty until the ETL has run with the key."),
-        "timeFrom": "now-14d", "hideTimeOverride": False,
+                        "Empty while EIA's data API is unavailable (it returned 504s throughout Thanksgiving 2026); "
+                        "the scheduled ETL fills it on the first run that gets through."),
+        "timeFrom": "14d", "hideTimeOverride": False,
         "targets": [b.csv("grid_demand_holiday.csv", [("aligned_time", "time", "timestamp"), ("respondent", "grid", "string"),
                                                      ("week", "week", "string"), ("demand_mw", "MW", "number")])],
         "transformations": [{"id": "partitionByValues", "options": {"fields": ["grid", "week"], "keepFields": False}}],
-        "fieldConfig": {"defaults": {"unit": "watt", "custom": {"lineWidth": 2}}, "overrides": []},
+        "fieldConfig": {"defaults": {"unit": "megwatt", "color": {"mode": "palette-classic"},
+                                     "thresholds": {"mode": "absolute", "steps": [{"color": "text", "value": None}]},
+                                     "custom": {"lineWidth": 2, "thresholdsStyle": {"mode": "off"}}}, "overrides": []},
         "options": {"legend": {"showLegend": True, "displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi"}},
     }, w=24, h=9)
 
     # --------------------------------------------------------------- farms
-    b.row("🎄 Farms behind the feast and the tree")
+    b.row("Farms behind the feast and the tree")
     b.add({
         "type": "barchart", "title": "Missouri's rank among states in turkeys raised",
         "description": "USDA NASS Quick Stats, turkeys raised (head), state level. Rank computed across states per year. Needs the NASS_API_KEY secret.",
@@ -242,17 +245,17 @@ def build(inline: bool) -> dict:
         "options": {"xField": "Year", "showValue": "always", "legend": {"showLegend": False, "displayMode": "list", "placement": "bottom"}},
     }, w=12, h=8, newline=False)
     b.add({
-        "type": "table", "title": "Christmas tree farms by Missouri county (Census of Agriculture)",
+        "type": "table", "title": "Christmas tree farms by Missouri county (2022 Census of Agriculture)",
         "description": "USDA NASS Census of Agriculture, Christmas trees, county level. '(D)' cells are withheld by NASS to avoid disclosing individual farms and stay blank. Needs the NASS_API_KEY secret.",
         "targets": [b.csv("nass_mo.csv", [("county_name", "County", "string"), ("year", "Census", "string"),
                                          ("short_desc", "Measure", "string"), ("value_num", "Value", "number"),
-                                         ("series", "series", "string")],
-                          filter_expr="series == 'christmas_tree_ops'")],
+                                         ("series", "series", "string"), ("year", "census_year", "number")],
+                          filter_expr="series == 'christmas_tree_ops' && census_year == 2022")],
         "options": {"showHeader": True, "sortBy": [{"displayName": "Value", "desc": True}]},
     }, w=12, h=8, x=12)
 
     # -------------------------------------------------------------- safety
-    b.row("🚗 Drive home safe: Highway Patrol holiday counting periods")
+    b.row("Drive home safe: Highway Patrol holiday counting periods")
     b.add({
         "type": "barchart", "title": "Thanksgiving weekend: crashes investigated by troopers",
         "description": ("MSHP holiday counting-period releases (6 p.m. Wednesday to 11:59 p.m. Sunday). These are troop-investigated crashes only. "
@@ -291,7 +294,7 @@ def build(inline: bool) -> dict:
         "Code &amp; ETL: github.com/adamcasey/awesome-grafana/tree/main/mo-holiday-season"), transparent=True), w=24, h=3)
 
     return {
-        "title": "Missouri's Holiday Season, by the Numbers 🦃🎄",
+        "title": "Missouri's Holiday Season, by the Numbers",
         "uid": "mo-holiday-season",
         "tags": ["missouri", "holiday", "awesome-grafana", "linkedin"],
         "timezone": "America/Chicago",

@@ -1,5 +1,5 @@
 {
-  "title": "Missouri's Holiday Season, by the Numbers 🦃🎄",
+  "title": "Missouri's Holiday Season, by the Numbers",
   "uid": "mo-holiday-season",
   "tags": [
     "missouri",
@@ -45,7 +45,7 @@
       "transparent": true,
       "options": {
         "mode": "html",
-        "content": "<div style='text-align:center;padding:6px 0;background:linear-gradient(90deg,#7b1d1d,#1E5631,#7b1d1d);border-radius:10px;color:#fff'><div style='font-size:30px;font-weight:800;letter-spacing:.5px'>🦃 Missouri's Holiday Season, by the Numbers 🎄</div><div style='font-size:14px;opacity:.9'>Thanksgiving → Christmas, told with public data: Hallmark (made in Kansas City), NOAA snow records, MDC turkey harvests, BLS prices, EIA grid demand and Highway Patrol counts</div></div>"
+        "content": "<div style='text-align:center;padding:6px 0;background:linear-gradient(90deg,#7b1d1d,#1E5631,#7b1d1d);border-radius:10px;color:#fff'><div style='font-size:30px;font-weight:800;letter-spacing:.5px'>Missouri's Holiday Season, by the Numbers</div><div style='font-size:14px;opacity:.9'>Thanksgiving → Christmas, told with public data: Hallmark (made in Kansas City), NOAA snow records, MDC turkey harvests, BLS prices, EIA grid demand and Highway Patrol counts</div></div>"
       },
       "gridPos": {
         "x": 0,
@@ -61,7 +61,7 @@
         "uid": "grafanacloud-infinity"
       },
       "type": "stat",
-      "title": "🎄 Christmas Day is…",
+      "title": "Christmas Day is…",
       "description": "Countdown to Dec 25, 2026 (America/Chicago). Rendered with Grafana's 'from now' unit.",
       "targets": [
         {
@@ -122,7 +122,7 @@
         "uid": "grafanacloud-infinity"
       },
       "type": "stat",
-      "title": "🎬 New Hallmark films, 2026",
+      "title": "New Hallmark films, 2026",
       "description": "Countdown to Christmas new original premieres on Hallmark Channel only, the most ever. Source: Hallmark lineup announcement (Sept 2026) as reported by TV Guide.",
       "targets": [
         {
@@ -196,7 +196,7 @@
         "uid": "grafanacloud-infinity"
       },
       "type": "stat",
-      "title": "❄️ STL white Christmases, 1991–2020",
+      "title": "STL white Christmases, 1991–2020",
       "description": "Share of Dec 25 mornings with ≥1\" of snow on the ground at St. Louis Lambert (GHCN-Daily USW00013994): 7 of 30 years. Same window as NOAA's climate normals.",
       "targets": [
         {
@@ -272,7 +272,7 @@
         "uid": "grafanacloud-infinity"
       },
       "type": "stat",
-      "title": "🦃 Frozen turkey, $/lb (U.S.)",
+      "title": "Frozen turkey, $/lb (U.S.)",
       "description": "BLS average price, U.S. city average (FRED APU0000706111), latest month. BLS publishes no Missouri-only series.",
       "targets": [
         {
@@ -337,7 +337,7 @@
         "uid": "grafanacloud-infinity"
       },
       "type": "stat",
-      "title": "📺 Hallmark films since 2018",
+      "title": "Hallmark films since 2018",
       "description": "Sum of verified Hallmark Channel Countdown premieres, 2018–2026 (curated series; see the hero panel).",
       "targets": [
         {
@@ -413,7 +413,7 @@
     {
       "id": 7,
       "type": "row",
-      "title": "🎬 The Hallmark Christmas movie machine, made in Kansas City",
+      "title": "The Hallmark Christmas movie machine, made in Kansas City",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -541,7 +541,7 @@
     {
       "id": 10,
       "type": "row",
-      "title": "❄️ I'm dreaming of a white Christmas… am I, though?",
+      "title": "I'm dreaming of a white Christmas… am I, though?",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -772,7 +772,7 @@
     {
       "id": 13,
       "type": "row",
-      "title": "🦃 Thanksgiving: from the Missouri woods to the dinner table",
+      "title": "Thanksgiving: from the Missouri woods to the dinner table",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -1066,7 +1066,7 @@
     {
       "id": 17,
       "type": "row",
-      "title": "⚡ The grid takes Thanksgiving off (then the lights go up)",
+      "title": "The grid takes Thanksgiving off (then the lights go up)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -1084,8 +1084,8 @@
       },
       "type": "timeseries",
       "title": "Hourly electricity demand: Thanksgiving week vs. the week before",
-      "description": "EIA-930 hourly demand (MW) for MISO (serves eastern Missouri) and SPP (western Missouri). The baseline week is shifted +7 days so the same weekdays overlay. Needs the EIA_API_KEY secret; the panel is empty until the ETL has run with the key.",
-      "timeFrom": "now-14d",
+      "description": "EIA-930 hourly demand (MW) for MISO (serves eastern Missouri) and SPP (western Missouri). The baseline week is shifted +7 days so the same weekdays overlay. Empty while EIA's data API is unavailable (it returned 504s throughout Thanksgiving 2026); the scheduled ETL fills it on the first run that gets through.",
+      "timeFrom": "14d",
       "hideTimeOverride": false,
       "targets": [
         {
@@ -1140,9 +1140,24 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "watt",
+          "unit": "megwatt",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          },
           "custom": {
-            "lineWidth": 2
+            "lineWidth": 2,
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           }
         },
         "overrides": []
@@ -1167,7 +1182,7 @@
     {
       "id": 19,
       "type": "row",
-      "title": "🎄 Farms behind the feast and the tree",
+      "title": "Farms behind the feast and the tree",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -1258,7 +1273,7 @@
         "uid": "grafanacloud-infinity"
       },
       "type": "table",
-      "title": "Christmas tree farms by Missouri county (Census of Agriculture)",
+      "title": "Christmas tree farms by Missouri county (2022 Census of Agriculture)",
       "description": "USDA NASS Census of Agriculture, Christmas trees, county level. '(D)' cells are withheld by NASS to avoid disclosing individual farms and stay blank. Needs the NASS_API_KEY secret.",
       "targets": [
         {
@@ -1295,9 +1310,14 @@
               "selector": "series",
               "text": "series",
               "type": "string"
+            },
+            {
+              "selector": "year",
+              "text": "census_year",
+              "type": "number"
             }
           ],
-          "filterExpression": "series == 'christmas_tree_ops'",
+          "filterExpression": "series == 'christmas_tree_ops' && census_year == 2022",
           "source": "url",
           "url": "https://raw.githubusercontent.com/adamcasey/awesome-grafana/main/mo-holiday-season/data/nass_mo.csv",
           "url_options": {
@@ -1324,7 +1344,7 @@
     {
       "id": 22,
       "type": "row",
-      "title": "🚗 Drive home safe: Highway Patrol holiday counting periods",
+      "title": "Drive home safe: Highway Patrol holiday counting periods",
       "collapsed": false,
       "gridPos": {
         "x": 0,

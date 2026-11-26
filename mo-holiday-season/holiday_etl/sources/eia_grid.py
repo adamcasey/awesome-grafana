@@ -27,6 +27,7 @@ class EiaGrid(Source):
     name = "eia_grid"
     output = "grid_demand_holiday.csv"
     needs_env = ("EIA_API_KEY",)
+    columns = ("time", "aligned_time", "respondent", "week", "demand_mw")
 
     def __init__(self, year: int | None = None):
         self.year = year or date.today().year

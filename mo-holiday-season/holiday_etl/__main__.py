@@ -8,7 +8,7 @@ import logging
 import os
 import sys
 
-from .base import SourceUnavailable, http_session
+from .base import DATA_DIR, SourceUnavailable, http_session
 from .sources import REGISTRY
 
 
@@ -41,7 +41,15 @@ def main(argv=None) -> int:
         try:
             src.run(session)
         except SourceUnavailable as exc:
-            logging.warning("%s UNAVAILABLE (previous data kept): %s", name, exc)
+            path = DATA_DIR / src.output
+            if not path.exists() and getattr(src, "columns", None):
+                # No previous data to keep: publish a header-only file so the dashboard shows
+                # 'No data' instead of a 404, and never anything invented.
+                DATA_DIR.mkdir(exist_ok=True)
+                path.write_text(",".join(src.columns) + "\n")
+                logging.warning("%s UNAVAILABLE (wrote header-only %s): %s", name, path.name, exc)
+            else:
+                logging.warning("%s UNAVAILABLE (previous data kept): %s", name, exc)
         except Exception as exc:  # report every source, then fail the job
             logging.error("%s FAILED: %s", name, exc)
             failed.append(name)
