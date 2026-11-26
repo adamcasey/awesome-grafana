@@ -114,3 +114,31 @@ def test_norm_county_matches_tiger_names():
 def test_thanksgiving_dates():
     assert thanksgiving(2026) == date(2026, 11, 26)
     assert thanksgiving(2025) == date(2025, 11, 27)
+
+
+# 2015-era layout: no year in the title, plural columns, 'County Total', 'Totals' row
+MDC_PAGE_2015 = """<html><body>
+<div>Title</div><h2>Spring Total</h2>
+<table><tr><th>County</th><th>Total</th></tr><tr><td>Webster</td><td>500</td></tr></table>
+<div>Title</div><h2>Fall Turkey Firearms</h2>
+<table><tr><th>County</th><th>Adult Gobblers</th><th>Adult Hens</th><th>Juvenile Gobblers</th><th>Juvenile Hens</th><th>County Total</th></tr>
+<tr><td>Greene</td><td>40</td><td>50</td><td>30</td><td>60</td><td>180</td></tr>
+<tr><td>Totals</td><td>40</td><td>50</td><td>30</td><td>60</td><td>180</td></tr></table>
+<div>Title</div><h2>Season Harvest Totals Archery Turkey</h2>
+<table><tr><th>County</th><th>Total</th></tr><tr><td>Greene</td><td>9</td></tr><tr><td>Dent</td><td>9</td></tr>
+<tr><td>Texas</td><td>9</td></tr><tr><td>Perry</td><td>9</td></tr></table>
+</body></html>"""
+
+
+def test_mdc_handles_2015_layout_and_column_aliases():
+    from holiday_etl.sources.mdc_turkey import COLUMN_ALIASES
+    t = fall_firearms_table(MDC_PAGE_2015, 2015)
+    cols = [COLUMN_ALIASES.get(c, c) for c in (str(c).strip().lower().replace(" ", "_") for c in t.columns)]
+    assert cols == ["county", "adult_gobbler", "adult_hen", "juvenile_gobbler", "juvenile_hen", "total"]
+    assert list(t["County"]) == ["Greene", "Totals"]
+
+
+def test_white_christmas_rejects_html_landing_page():
+    from holiday_etl.sources.white_christmas import WhiteChristmas
+    with pytest.raises(ValueError, match="expected an XLSX"):
+        WhiteChristmas()._frame(b"<!DOCTYPE html><html>...")

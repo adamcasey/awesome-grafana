@@ -11,7 +11,8 @@ import pandas as pd
 
 from ..base import Source, expect
 
-URL = "https://www.ncei.noaa.gov/media/3501"
+# ncei.noaa.gov/media/3501 is the HTML landing page; this is the file it links to.
+URL = "https://www.ncei.noaa.gov/sites/default/files/2021-12/Christmas_day_snow_statistics_1991-2020_updated.xlsx"
 STL_ID, KC_ID = "USW00013994", "USW00003947"
 
 
@@ -33,10 +34,10 @@ class WhiteChristmas(Source):
         return r.content
 
     def _frame(self, raw: bytes) -> pd.DataFrame:
-        if raw[:2] == b"PK":  # xlsx
-            sheets = pd.read_excel(io.BytesIO(raw), sheet_name=None)
-            return max(sheets.values(), key=len)
-        return pd.read_csv(io.BytesIO(raw))
+        if raw[:2] != b"PK":  # xlsx is a zip; anything else (e.g. an HTML page) is the wrong URL
+            raise ValueError(f"white_christmas: expected an XLSX file, got {raw[:40]!r}")
+        sheets = pd.read_excel(io.BytesIO(raw), sheet_name=None)
+        return max(sheets.values(), key=len)
 
     def inspect(self, raw) -> str:
         df = self._frame(raw)

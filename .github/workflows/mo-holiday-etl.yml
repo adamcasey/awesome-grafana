@@ -38,6 +38,9 @@ jobs:
           NASS_API_KEY: ${{ secrets.NASS_API_KEY }}
         run: python -m holiday_etl run --allow-missing-keys ${{ inputs.only && format('--only {0}', inputs.only) || '' }}
       - name: Commit data
+        # Each source is validated independently and a failed source never writes its file,
+        # so publish whatever passed even when another source failed (the job stays red).
+        if: ${{ !cancelled() }}
         run: |
           git config user.name "holiday-etl[bot]"
           git config user.email "holiday-etl@users.noreply.github.com"

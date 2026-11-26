@@ -18,32 +18,42 @@ from ..base import Source, expect
 
 PAGE = "https://mdc.mo.gov/hunting-trapping/species/turkey/turkey-reports/turkey-harvest-summaries/{year}-turkey-harvest-summary"
 TIGER = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1/query"
-GOLDEN_TOTAL = {2025: 1950}
-FIRST_YEAR = 2015  # earliest summary page MDC links (TODO: confirm slug pattern pre-2024)
+GOLDEN_TOTAL = {2015: 6158, 2025: 1950}  # both read off MDC's own Total rows
+FIRST_YEAR = 2015  # earliest summary page MDC links (slug pattern confirmed 2015-2026)
 
 
 def fall_firearms_table(page_html: str, year: int) -> pd.DataFrame:
-    """Return the all-counties fall firearms table from one summary page."""
+    """Return the all-counties fall firearms table from one summary page.
+
+    Two layouts exist: 2024+ titles read '2025 Fall Turkey Firearms' with a 'Top 5 Counties'
+    mini-table first; 2015-era titles read just 'Fall Turkey Firearms'. The section ends at the
+    next Spring/Archery/Youth heading; the largest table inside it is the all-counties table.
+    """
     doc = lxml_html.fromstring(page_html)
-    title_re = re.compile(rf"{year}\s+Fall\s+Turkey\s+Firearms", re.I)
-    any_title_re = re.compile(r"\b\d{4}\s+(Youth\s+)?(Spring|Fall)\s+Turkey", re.I)
+    title_re = re.compile(rf"^(?:{year}\s+)?Fall\s+Turkey\s+Firearms$", re.I)
     in_section, candidates = False, []
     for el in doc.iter():
         if el.tag == "table":
             if in_section:
                 candidates.append(el)
             continue
-        text = (el.text or "").strip()
+        text = " ".join((el.text or "").split())
         if not text or len(text) > 80:
             continue
-        if title_re.search(text):
+        if title_re.match(text):
             in_section = True
-        elif in_section and any_title_re.search(text):
+        elif in_section and candidates and re.search(r"\b(Spring|Archery|Youth)\b", text, re.I):
             break
     if not candidates:
-        raise ValueError(f"no '{year} Fall Turkey Firearms' table found")
+        raise ValueError(f"{year}: no 'Fall Turkey Firearms' table found")
     tables = [pd.read_html(io.StringIO(lxml_html.tostring(t, encoding="unicode")))[0] for t in candidates]
     return max(tables, key=len)
+
+
+COLUMN_ALIASES = {  # older pages pluralize and say 'County Total'
+    "adult_gobblers": "adult_gobbler", "adult_hens": "adult_hen", "juvenile_gobblers": "juvenile_gobbler",
+    "juvenile_hens": "juvenile_hen", "county_total": "total",
+}
 
 
 def norm_county(name: str) -> str:
@@ -97,7 +107,7 @@ class MdcTurkey(Source):
             if page is None:
                 continue
             t = fall_firearms_table(page, y)
-            t.columns = [str(c).strip().lower().replace(" ", "_") for c in t.columns]
+            t.columns = [COLUMN_ALIASES.get(c, c) for c in (str(c).strip().lower().replace(" ", "_") for c in t.columns)]
             t = t[~t["county"].astype(str).str.lower().isin(["total", "totals"])].copy()
             t["year"] = y
             rows.append(t)
