@@ -47,11 +47,14 @@ jobs:
             "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1/query?where=STATE%3D%2729%27&outFields=NAME,GEOID,CENTLAT,CENTLON&returnGeometry=false&f=json"
           curl -sSL -A "$UA" -o raw/white_christmas.xlsx -w "ncei %{http_code} %{size_download}\n" \
             "https://www.ncei.noaa.gov/sites/default/files/2021-12/Christmas_day_snow_statistics_1991-2020_updated.xlsx"
-      - uses: actions/upload-artifact@v4
+      - name: Publish snapshot to a throwaway branch
         if: ${{ inputs.snapshot }}
-        with:
-          name: raw-sources
-          path: mo-holiday-season/raw/
+        run: |
+          cd raw
+          git init -q -b snapshot/raw-sources
+          git config user.name "holiday-etl[bot]"; git config user.email "holiday-etl@users.noreply.github.com"
+          git add -A && git commit -qm "raw source snapshot $(date -u +%FT%TZ)"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" snapshot/raw-sources
       - run: pip install -r requirements.txt
         if: ${{ !inputs.snapshot }}
       - run: python -m pytest -q
