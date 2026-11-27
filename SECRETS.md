@@ -13,12 +13,12 @@ The private key exists in exactly two places: your machine (`.env.keys`) and the
 `DOTENV_PRIVATE_KEY`. Losing it means re-entering every value. Keep a copy in your password manager.
 
 ## First-time setup (once)
+Requires Node 18+. dotenvx is a dev dependency in the root `package.json`, pinned by `package-lock.json`; CI installs the same version with `npm ci`.
 ```bash
-npm install -g @dotenvx/dotenvx      # or: brew install dotenvx/brew/dotenvx
-scripts/install-hooks.sh             # pre-commit hook: blocks plaintext values and private keys
-dotenvx set EIA_API_KEY  <value>     # creates .env + .env.keys on first use
-dotenvx set NASS_API_KEY <value>
-dotenvx keypair DOTENV_PRIVATE_KEY   # copy this into GitHub → Settings → Secrets → Actions → DOTENV_PRIVATE_KEY
+npm install                              # installs the pinned dotenvx + the pre-commit hook (via "prepare")
+npx dotenvx set EIA_API_KEY  <value>     # creates .env + .env.keys on first use
+npx dotenvx set NASS_API_KEY <value>
+npx dotenvx keypair DOTENV_PRIVATE_KEY   # copy this into GitHub → Settings → Secrets → Actions → DOTENV_PRIVATE_KEY
 git add .env && git commit -m "Add encrypted .env"
 ```
 Then delete the legacy `EIA_API_KEY` and `NASS_API_KEY` repository secrets, and remove the
@@ -27,11 +27,13 @@ Then delete the legacy `EIA_API_KEY` and `NASS_API_KEY` repository secrets, and 
 ## Everyday use
 | Task | Command |
 |---|---|
-| Add/change a secret | `dotenvx set NAME value` (encrypts in place; commit `.env`) |
-| Read one value | `dotenvx get NAME` |
-| Run anything with secrets | `dotenvx run -- <command>`, e.g. `cd mo-holiday-season && dotenvx run -f ../.env -- python -m holiday_etl run --only eia_grid` |
-| Use in your shell | `export EIA_API_KEY=$(dotenvx get EIA_API_KEY)` |
-| Rotate the keypair | `dotenvx rotate`, then update the `DOTENV_PRIVATE_KEY` GitHub secret |
+| Add/change a secret | `npx dotenvx set NAME value` or `npm run secrets:set -- NAME value` (encrypts in place; commit `.env`) |
+| Read one value | `npx dotenvx get NAME` or `npm run secrets:get -- NAME` |
+| Run the ETL with secrets | `npm run etl -- --only eia_grid` |
+| Run anything with secrets | `npx dotenvx run -- <command>` |
+| Use in your shell | `export EIA_API_KEY=$(npx dotenvx get EIA_API_KEY)` |
+| Check for leaks by hand | `npm run secrets:check` |
+| Rotate the keypair | `npx dotenvx rotate`, then update the `DOTENV_PRIVATE_KEY` GitHub secret |
 | New laptop | Copy the private key from your password manager into `.env.keys` (`DOTENV_PRIVATE_KEY=…`) |
 
 ## Guardrails

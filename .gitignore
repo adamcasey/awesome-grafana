@@ -6,3 +6,6 @@ __pycache__/
 .env.keys
 *.env.keys
 .env.local
+
+# node tooling (dotenvx)
+node_modules/
