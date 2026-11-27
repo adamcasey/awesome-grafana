@@ -40,7 +40,10 @@ def http_session() -> requests.Session:
 def require_env(name: str) -> str:
     val = os.environ.get(name)
     if not val:
-        raise RuntimeError(f"{name} is not set (add it as a GitHub Actions secret)")
+        raise RuntimeError(f"{name} is not set (add it with `dotenvx set {name} <value>` at the repo root)")
+    if val.startswith("encrypted:"):
+        # dotenvx passes ciphertext through unchanged when it has no private key.
+        raise RuntimeError(f"{name} is still encrypted: DOTENV_PRIVATE_KEY is missing or wrong")
     return val
 
 
