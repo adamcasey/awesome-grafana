@@ -58,9 +58,16 @@ jobs:
       - run: pip install -r requirements.txt
       - run: python -m pytest -q
         if: ${{ !inputs.snapshot }}
-      - name: Install dotenvx
+      - uses: actions/setup-node@v4
         if: ${{ !inputs.snapshot }}
-        run: npm install -g @dotenvx/dotenvx@1
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install dotenvx (pinned by package-lock.json)
+        if: ${{ !inputs.snapshot }}
+        working-directory: .
+        run: npm ci --no-audit --no-fund
       - name: Run ETL
         if: ${{ !inputs.snapshot }}
         env:
@@ -79,7 +86,7 @@ jobs:
               echo "::error::../.env is committed but the DOTENV_PRIVATE_KEY secret is not set"; exit 1
             fi
             # --overload: the encrypted .env is the source of truth over any legacy secret.
-            dotenvx run -f ../.env --overload -- python -m holiday_etl "${args[@]}"
+            npx dotenvx run -f ../.env --overload -- python -m holiday_etl "${args[@]}"
           else
             echo "::warning::no ../.env yet; using legacy EIA_API_KEY/NASS_API_KEY secrets"
             python -m holiday_etl "${args[@]}"
