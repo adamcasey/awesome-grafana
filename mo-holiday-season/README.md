@@ -1,4 +1,4 @@
-# 🦃🎄 Missouri's Holiday Season, by the Numbers
+# Missouri's Holiday Season, by the Numbers
 
 A Grafana Cloud dashboard covering Thanksgiving through Christmas, built entirely on public data. The hero panel tracks Hallmark's Christmas-movie output; Hallmark is headquartered in Kansas City.
 
@@ -31,17 +31,10 @@ python dashboard/build_dashboard.py         # regenerate dashboard JSON (raw Git
 python dashboard/build_dashboard.py --inline --out /tmp/preview.json   # embed local data for preview
 ```
 
-## Definitions worth knowing
+## Definitions
 - **White Christmas** means ≥1" of snow *on the ground* on Dec 25 (NOAA's definition). Missing days are null, never 0.
 - **Hallmark counts** are new originals on Hallmark Channel. The sister linear network is stacked separately. Streaming-only titles are excluded. Press totals often mix all three, so they disagree.
 - **MSHP figures:** "Crashes ─ N" counts crashes investigated by troopers only. The "Statewide…" sentence covers all agencies for the *prior* year. They are stored as separate scopes.
 
 ## Secrets
 `EIA_API_KEY` (https://www.eia.gov/opendata/register.php) and `NASS_API_KEY` (https://quickstats.nass.usda.gov/api). Without them the ETL skips those two sources and their panels stay empty.
-
-## Open TODOs
-1. Source Hallmark seasons 2010–2017 from Crown Media / Hallmark press releases.
-2. `inspect white_christmas` and confirm the XLSX columns, then add the odds panel.
-3. Add MSHP Christmas counting-period release URLs to `curated/mshp_releases.csv`.
-4. `inspect nass` and confirm the Christmas-tree `short_desc` names.
-5. Confirm that MDC summary-page slugs before 2024 follow the same pattern (the ETL records 404s).
