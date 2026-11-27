@@ -58,12 +58,32 @@ jobs:
       - run: pip install -r requirements.txt
       - run: python -m pytest -q
         if: ${{ !inputs.snapshot }}
+      - name: Install dotenvx
+        if: ${{ !inputs.snapshot }}
+        run: npm install -g @dotenvx/dotenvx@1
       - name: Run ETL
         if: ${{ !inputs.snapshot }}
         env:
+          # Decrypts the committed ../.env (repo root). One secret instead of one per API key.
+          DOTENV_PRIVATE_KEY: ${{ secrets.DOTENV_PRIVATE_KEY }}
+          # TODO(remove after migration): legacy per-key secrets, used only while ../.env does not exist.
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
           NASS_API_KEY: ${{ secrets.NASS_API_KEY }}
-        run: python -m holiday_etl run --allow-missing-keys ${{ inputs.only && format('--only {0}', inputs.only) || '' }}
+          ONLY: ${{ inputs.only }}
+        run: |
+          args=(run --allow-missing-keys)
+          [[ -n "$ONLY" ]] && args+=(--only "$ONLY")
+          if [[ -f ../.env ]]; then
+            # Without the key, dotenvx silently passes ciphertext through as the value. Fail instead.
+            if [[ -z "$DOTENV_PRIVATE_KEY" ]]; then
+              echo "::error::../.env is committed but the DOTENV_PRIVATE_KEY secret is not set"; exit 1
+            fi
+            # --overload: the encrypted .env is the source of truth over any legacy secret.
+            dotenvx run -f ../.env --overload -- python -m holiday_etl "${args[@]}"
+          else
+            echo "::warning::no ../.env yet; using legacy EIA_API_KEY/NASS_API_KEY secrets"
+            python -m holiday_etl "${args[@]}"
+          fi
       - name: Commit data
         # Each source is validated independently and a failed source never writes its file,
         # so publish whatever passed even when another source failed (the job stays red).

@@ -37,4 +37,4 @@ python dashboard/build_dashboard.py --inline --out /tmp/preview.json   # embed l
 - **MSHP figures:** "Crashes ─ N" counts crashes investigated by troopers only. The "Statewide…" sentence covers all agencies for the *prior* year. They are stored as separate scopes.
 
 ## Secrets
-`EIA_API_KEY` (https://www.eia.gov/opendata/register.php) and `NASS_API_KEY` (https://quickstats.nass.usda.gov/api). Without them the ETL skips those two sources and their panels stay empty.
+API keys (`EIA_API_KEY`, `NASS_API_KEY`) live encrypted in the repo-root `.env`, managed with dotenvx. See [`../SECRETS.md`](../SECRETS.md). Without them the ETL skips those two sources and their panels stay empty.
